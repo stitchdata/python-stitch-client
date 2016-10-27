@@ -60,22 +60,20 @@ class Client(object):
 
     _buffer = Buffer()
 
-    def __init__(self, \
-                 client_id, \
-                 token, \
-                 namespace, \
-                 table_name = None, \
-                 key_names = None, \
-                 callback_function = None, \
-                 stitch_url = DEFAULT_STITCH_URL, \
-                 batch_size_bytes = DEFAULT_BATCH_SIZE_BYTES, \
-                 batch_delay_millis = DEFAULT_BATCH_DELAY_MILLIS):
+    def __init__(self,
+                 client_id,
+                 token,
+                 table_name=None,
+                 key_names=None,
+                 callback_function=None,
+                 stitch_url=DEFAULT_STITCH_URL,
+                 batch_size_bytes=DEFAULT_BATCH_SIZE_BYTES,
+                 batch_delay_millis=DEFAULT_BATCH_DELAY_MILLIS):
 
         assert isinstance(client_id, int), 'client_id is not an integer: {}'.format(client_id)
 
         self.client_id = client_id
         self.token = token
-        self.namespace = namespace
         self.table_name = table_name
         self.key_names = key_names
         self.stitch_url = stitch_url
@@ -99,7 +97,6 @@ class Client(object):
             raise ValueError('Message action property must be one of: "upsert", "switch_view"')
 
         message['client_id'] = self.client_id
-        message['namespace'] = self.namespace
         message.setdefault('table_name', self.table_name)
 
         with StringIO() as s:
@@ -145,6 +142,8 @@ class Client(object):
         if response.status < 300:
             if self.callback_function is not None:
                 self.callback_function([x.callback_arg for x in batch])
+        else:
+            raise RuntimeError("Error sending data to the Stitch API, with response status code {}".format(response.status))
 
 
     def flush(self):
@@ -164,7 +163,7 @@ class Client(object):
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
 
-    with Client(int(os.environ['STITCH_CLIENT_ID']), os.environ['STITCH_TOKEN'], os.environ['STITCH_NAMESPACE'], callback_function=print) as c:
+    with Client(int(os.environ['STITCH_CLIENT_ID']), os.environ['STITCH_TOKEN'], callback_function=print) as c:
         for i in range(1,10):
             c.push({'action': 'upsert',
                     'table_name': 'cm_test_table',
