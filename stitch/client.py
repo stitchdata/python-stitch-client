@@ -20,8 +20,18 @@ BufferEntry = collections.namedtuple('BufferEntry', 'timestamp value callback_ar
 
 class Client(object):
 
+    # I would suggest just rolling the Buffer class into the Client
+    # class. At first I was going to suggest moving Buffer to a
+    # top-level class (not nested under Client), but then it occurred
+    # to me that there's probably not much reason for it to exist on
+    # its own. This would just require moving the _queue and
+    # _available_bytes properties into Client and adding put and take
+    # as private(ish) methods on that class. That's making me
+    # second-guess why I made it its own class in the Java library. I
+    # don't feel strongly about this...
     class Buffer(object):
 
+        # I would move these constants to the top level
         MAX_BATCH_SIZE_BYTES = 4194304
         MAX_MESSAGES_PER_BATCH = 10000
 
@@ -60,6 +70,11 @@ class Client(object):
 
     _buffer = Buffer()
 
+    # I don't think I've ever seen backslashes used in this way. Did
+    # you add them to fix a compile error or something? You should be
+    # able to get rid of them. You may also want to get rid of the
+    # whitespace around the equal signs. e.g.
+    #   def __init__(... table_name=None, key_names=None, ...)
     def __init__(self, \
                  client_id, \
                  token, \
@@ -142,6 +157,11 @@ class Client(object):
         logger.debug("Sending batch of %s entries", len(batch))
         body = self._serialize_entries(batch)
         response = self._stitch_request(body)
+        # I wonder if we should have an else clause here too and throw
+        # an exception if the status is >= 300. Will _stitch_request's
+        # call to urlopen always raise an error if the status is >=
+        # 300? I just think it would be good to ensure that
+        # _send_batch always throws if it gets an non-ok response.
         if response.status < 300:
             if self.callback_function is not None:
                 self.callback_function([x.callback_arg for x in batch])
@@ -164,6 +184,8 @@ class Client(object):
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
 
+    # I wonder if we should just get rid of the namespace argument
+    # here. I don't think Gate requires it.
     with Client(int(os.environ['STITCH_CLIENT_ID']), os.environ['STITCH_TOKEN'], os.environ['STITCH_NAMESPACE'], callback_function=print) as c:
         for i in range(1,10):
             c.push({'action': 'upsert',
