@@ -102,11 +102,7 @@ class Client(object):
         with StringIO() as s:
             writer = Writer(s, "json")
             writer.write(message)
-            if callback_arg is not None:
-                self._buffer.put(s.getvalue(), callback_arg)
-            else:
-                v = s.getvalue()
-                self._buffer.put(v, v)
+            self._buffer.put(s.getvalue(), callback_arg)
 
         batch = self._buffer.take(self.batch_size_bytes, self.batch_delay_millis)
         if batch is not None:
