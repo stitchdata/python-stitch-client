@@ -162,7 +162,7 @@ if __name__ == "__main__":
     with Client(int(os.environ['STITCH_CLIENT_ID']), os.environ['STITCH_TOKEN'], callback_function=print) as c:
         for i in range(1,10):
             c.push({'action': 'upsert',
-                    'table_name': 'cm_test_table',
+                    'table_name': 'test_table',
                     'key_names': ['id'],
                     'sequence': i,
                     'data': {'id': i, 'value': 'abc'}}, i)
