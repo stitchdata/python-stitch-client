@@ -9,4 +9,5 @@ setup(name="stitchclient",
       author="Stitch",
       url="https://github.com/stitchdata/python-stitch-client",
       classifiers=['Programming Language :: Python :: 3 :: Only'],
-      packages=find_packages())
+      packages=find_packages(),
+      install_requires=["python-dateutil", "msgpack-python"])
