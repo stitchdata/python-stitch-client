@@ -1,36 +1,25 @@
 python-stitch-client
 ====================
 
-A python client library for the Stitch Import API
+A Stitch Import API client library for python
 
 Use
 ---
 
-This library depends on python3 and a to-be-released version of
-`transit-python`. The first step is to setup the python environment
-and manually install the correct version of that library:
+This library depends on python3 - if that's not your default python, try this:
 
 ```bash
 › mkvirtualenv -p python3 stitch
-```
-
-```bash
-› workon stitch
-› git clone https://github.com/cognitect/transit-python
-› cd transit-python
-› python setup.py install
 ```
 
 Next, install this library:
 
 ```bash
 › workon stitch
-› git clone http://github.com/stitchdata/python-stitch-client
-› cd python-stitch-client
-› python setup.py install
+› pip install stitchclient
 ```
 
-Now you're ready to use the library.  Using the same `virtualenv`:
+Now you're ready to use the library. From the same `virtualenv`:
 
 ```python
 from stitchclient.client import Client
@@ -47,6 +36,8 @@ with Client(int(os.environ['STITCH_CLIENT_ID']), os.environ['STITCH_TOKEN'], cal
 License
 -------
 
-Copyright © 2016 Stitch
+python-stitch-client is Copyright © 2016 Stitch and Distributed under
+the Apache License Version 2.0
 
-Distributed under the Apache License Version 2.0
+transit-python is Copyright © 2014-2016 Cognitect and Distributed
+under the Apache License Version 2.0
