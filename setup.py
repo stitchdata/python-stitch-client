@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 import subprocess
 
 setup(name="stitchclient",
-      version="0.4.0",
+      version="0.4.1",
       description="A Stitch API client for Python",
       author="Stitch",
       author_email="support@stitchdata.com",

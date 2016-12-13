@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 DEFAULT_BATCH_SIZE_BYTES = 4194304
 DEFAULT_BATCH_DELAY_MILLIS = 60000
-DEFAULT_STITCH_URL = 'https://pipeline-gateway.rjmetrics.com/push'
+DEFAULT_STITCH_URL = 'https://api.stitchdata.com/v2/import/push'
 
 BufferEntry = collections.namedtuple('BufferEntry', 'timestamp value callback_arg')
 
