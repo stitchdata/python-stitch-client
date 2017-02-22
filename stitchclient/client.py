@@ -3,7 +3,7 @@ import time
 import logging
 import collections
 
-import urllib.request
+import requests
 
 from collections import deque
 from io import StringIO
@@ -122,25 +122,19 @@ class Client(object):
     def _stitch_request(self, body):
         headers = {'Authorization': 'Bearer {}'.format(self.token),
                    'Content-Type': 'application/transit+json'}
-        req = urllib.request.Request(self.stitch_url, body.encode("utf8"), headers)
-
-        try:
-            with urllib.request.urlopen(req) as response:
-                return response
-        except urllib.error.HTTPError as e:
-            logger.error(e.read())
-            raise e
+        return requests.post(self.stitch_url, headers=headers, data=body)
 
     def _send_batch(self, batch):
         logger.debug("Sending batch of %s entries", len(batch))
         body = self._serialize_entries(batch)
         response = self._stitch_request(body)
-        if response.status < 300:
+
+        if response.status_code < 300:
             if self.callback_function is not None:
                 self.callback_function([x.callback_arg for x in batch])
         else:
-            raise RuntimeError("Error sending data to the Stitch API, with response status code {}".format(response.status))
-
+            raise RuntimeError("Error sending data to the Stitch API. {0.status_code} - {0.content}"
+                               .format(response))
 
     def flush(self):
         while True:
