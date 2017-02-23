@@ -126,7 +126,7 @@ class Client(object):
 
     def _send_batch(self, batch):
         logger.debug("Sending batch of %s entries", len(batch))
-        body = self._serialize_entries(batch)
+        body = self._serialize_entries(batch).encode('utf8')
         response = self._stitch_request(body)
 
         if response.status_code < 300:
