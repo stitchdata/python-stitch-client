@@ -1,7 +1,7 @@
 import os
 import logging
 import requests
-from .buffer import Buffer
+from stitchclient.buffer import Buffer
 
 from io import StringIO
 from transit.writer import Writer
