@@ -28,7 +28,8 @@ class Client(object):
                  batch_size_bytes=DEFAULT_BATCH_SIZE_BYTES,
                  batch_delay_millis=DEFAULT_BATCH_DELAY_MILLIS):
 
-        assert isinstance(client_id, int), 'client_id is not an integer: {}'.format(client_id)
+        assert(isinstance(client_id, int),
+               'client_id is not an integer: {}'.format(client_id))
 
         self.client_id = client_id
         self.token = token
@@ -39,7 +40,7 @@ class Client(object):
         self.batch_delay_millis = batch_delay_millis
         self.callback_function = callback_function
 
-    def push(self, message, callback_arg = None):
+    def push(self, message, callback_arg=None):
         """
         message must be a dict with at least these keys:
             action, table_name, key_names, sequence, data
@@ -49,10 +50,8 @@ class Client(object):
 
         if message['action'] == 'upsert':
             message.setdefault('key_names', self.key_names)
-        elif message['action'] == 'switch_view':
-            pass
         else:
-            raise ValueError('Message action property must be one of: "upsert", "switch_view"')
+            raise ValueError('Message action property must be "upsert"')
 
         message['client_id'] = self.client_id
         message.setdefault('table_name', self.table_name)
@@ -62,7 +61,8 @@ class Client(object):
             writer.write(message)
             self._buffer.put(s.getvalue(), callback_arg)
 
-        batch = self._buffer.take(self.batch_size_bytes, self.batch_delay_millis)
+        batch = self._buffer.take(
+            self.batch_size_bytes, self.batch_delay_millis)
         if batch is not None:
             self._send_batch(batch)
 
@@ -91,12 +91,12 @@ class Client(object):
             if self.callback_function is not None:
                 self.callback_function([x.callback_arg for x in batch])
         else:
-            raise RuntimeError("Error sending data to the Stitch API. {0.status_code} - {0.content}"
+            raise RuntimeError("Error sending data to the Stitch API. {0.status_code} - {0.content}"  # nopep8
                                .format(response))
 
     def flush(self):
         while True:
-            batch = self._buffer.take(0,0)
+            batch = self._buffer.take(0, 0)
             if batch is None:
                 return
 
@@ -111,8 +111,10 @@ class Client(object):
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
 
-    with Client(int(os.environ['STITCH_CLIENT_ID']), os.environ['STITCH_TOKEN'], callback_function=print) as c:
-        for i in range(1,10):
+    with Client(int(os.environ['STITCH_CLIENT_ID']),
+                os.environ['STITCH_TOKEN'],
+                callback_function=print) as c:
+        for i in range(1, 10):
             c.push({'action': 'upsert',
                     'table_name': 'test_table',
                     'key_names': ['id'],
