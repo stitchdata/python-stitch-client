@@ -28,8 +28,7 @@ class Client(object):
                  batch_size_bytes=DEFAULT_BATCH_SIZE_BYTES,
                  batch_delay_millis=DEFAULT_BATCH_DELAY_MILLIS):
 
-        assert(isinstance(client_id, int),
-               'client_id is not an integer: {}'.format(client_id))
+        assert isinstance(client_id, int), 'client_id is not an integer: {}'.format(client_id)  # nopep8
 
         self.client_id = client_id
         self.token = token
