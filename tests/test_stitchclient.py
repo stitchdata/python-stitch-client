@@ -1,6 +1,7 @@
 import unittest
 import stitchclient.client
 import time
+from stitchclient.buffer import MAX_BATCH_SIZE_BYTES
 
 class TestTargetStitch(unittest.TestCase):
 
@@ -80,7 +81,7 @@ class TestBuffer(unittest.TestCase):
             b1len += len(x.value)
         for x in b2:
             b2len += len(x.value)            
-        self.assertTrue(b1len < buf.MAX_BATCH_SIZE_BYTES)
+        self.assertTrue(b1len < MAX_BATCH_SIZE_BYTES)
         self.assertTrue(b2len < b1len)
         self.assertIsNone(b3)
 
@@ -92,7 +93,7 @@ class TestBuffer(unittest.TestCase):
     def test_trigger_batch_at_10k_messages(self):
         buf = stitchclient.client.Buffer()        
         put = lambda: buf.put(tiny_record, None)
-        take = lambda: buf.take(buf.MAX_BATCH_SIZE_BYTES, 60000)
+        take = lambda: buf.take(MAX_BATCH_SIZE_BYTES, 60000)
         for i in range(9999):
             put()
         self.assertTrue(take() is None)
