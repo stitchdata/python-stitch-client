@@ -40,17 +40,13 @@ class Client(object):
         self.callback_function = callback_function
 
     def push(self, message, callback_arg=None):
-        """
-        message must be a dict with at least these keys:
-            action, table_name, key_names, sequence, data
-        and optionally these keys:
-            table_version
+        """message should be a dict recognized by the Stitch Import API.
+
+        See https://www.stitchdata.com/docs/integrations/import-api.
         """
 
         if message['action'] == 'upsert':
             message.setdefault('key_names', self.key_names)
-        else:
-            raise ValueError('Message action property must be "upsert"')
 
         message['client_id'] = self.client_id
         message.setdefault('table_name', self.table_name)
