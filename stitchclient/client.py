@@ -51,35 +51,29 @@ class Client(object):
         message['client_id'] = self.client_id
         message.setdefault('table_name', self.table_name)
 
-        with StringIO() as s:
-            writer = Writer(s, "json")
-            writer.write(message)
-            self._buffer.put(s.getvalue(), callback_arg)
+        self._buffer.put(message, callback_arg)
 
-        batch = self._buffer.take(
-            self.batch_size_bytes, self.batch_delay_millis)
+        batch = self._buffer.take(self.batch_delay_millis)
         if batch is not None:
             self._send_batch(batch)
 
     def _serialize_entries(self, entries):
-        deserialized_entries = []
-        for entry in entries:
-            reader = Reader("json")
-            deserialized_entries.append(reader.read(StringIO(entry.value)))
-
         with StringIO() as s:
             writer = Writer(s, "json")
-            writer.write(deserialized_entries)
+            writer.write(entries)
             return s.getvalue()
 
     def _stitch_request(self, body):
         headers = {'Authorization': 'Bearer {}'.format(self.token),
                    'Content-Type': 'application/transit+json'}
+        print('Headers is ' + str(headers))
+        print('Data is' + body[:1000])
         return requests.post(self.stitch_url, headers=headers, data=body)
 
     def _send_batch(self, batch):
         logger.debug("Sending batch of %s entries", len(batch))
         body = self._serialize_entries(batch).encode('utf8')
+        print('Sending batch of {} entries, {} bytes'.format(len(batch), len(body)))
         response = self._stitch_request(body)
 
         if response.status_code < 300:
@@ -91,7 +85,7 @@ class Client(object):
 
     def flush(self):
         while True:
-            batch = self._buffer.take(0, 0)
+            batch = self._buffer.take(0)
             if batch is None:
                 return
 
