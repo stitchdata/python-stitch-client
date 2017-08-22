@@ -5,7 +5,6 @@ from stitchclient.buffer import Buffer
 
 from io import StringIO
 from transit.writer import Writer
-from transit.reader import Reader
 
 logger = logging.getLogger(__name__)
 
@@ -53,15 +52,9 @@ class Client(object):
 
         self._buffer.put(message, callback_arg)
 
-        batch = self._buffer.take(self.batch_delay_millis)
-        if batch is not None:
+        for batch in self._buffer.take(self.batch_delay_millis):
             self._send_batch(batch)
 
-    def _serialize_entries(self, entries):
-        with StringIO() as s:
-            writer = Writer(s, "json")
-            writer.write(entries)
-            return s.getvalue()
 
     def _stitch_request(self, body):
         headers = {'Authorization': 'Bearer {}'.format(self.token),
@@ -72,7 +65,10 @@ class Client(object):
 
     def _send_batch(self, batch):
         logger.debug("Sending batch of %s entries", len(batch))
-        body = self._serialize_entries(batch).encode('utf8')
+        with StringIO() as s:
+            writer = Writer(s, "json")
+            writer.write(entries)
+            body = s.getvalue().encode('utf8')
         print('Sending batch of {} entries, {} bytes'.format(len(batch), len(body)))
         response = self._stitch_request(body)
 
@@ -84,11 +80,7 @@ class Client(object):
                                .format(response))
 
     def flush(self):
-        while True:
-            batch = self._buffer.take(0)
-            if batch is None:
-                return
-
+        for batch in self._buffer.take(0, True):
             self._send_batch(batch)
 
     def __enter__(self):

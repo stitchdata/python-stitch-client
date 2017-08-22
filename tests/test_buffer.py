@@ -33,15 +33,14 @@ class TestBuffer(unittest.TestCase):
     def test_single_record_available_immediately(self):
         buf = stitchclient.client.Buffer()
         buf.put(tiny_record, None)
-        self.assertEqual(buf.take(0, 0)[0].value,
+        self.assertEqual(buf.take(0)[0].value,
                          tiny_record)
 
     def test_withhold_until_bytes_available(self):
         buf = stitchclient.client.Buffer()        
-        batch_size_bytes = int(len(tiny_record) * 2 + len(tiny_record) / 2.0)
         batch_delay_millis = 1000000000
         put = lambda: buf.put(tiny_record, None)
-        take = lambda: buf.take(batch_size_bytes, batch_delay_millis)
+        take = lambda: buf.take(batch_delay_millis)
         
         put()
         self.assertTrue(take() is None)
@@ -54,7 +53,7 @@ class TestBuffer(unittest.TestCase):
     def test_buffer_empty_after_batch(self):
         buf = stitchclient.client.Buffer()        
         put = lambda: buf.put(tiny_record, None)
-        take = lambda: buf.take(0, 0)        
+        take = lambda: buf.take(0)
         put()
         put()
         put()
@@ -64,7 +63,7 @@ class TestBuffer(unittest.TestCase):
     def test_does_not_exceed_max_batch_size(self):
         buf = stitchclient.client.Buffer()        
         put = lambda: buf.put(big_record, None)
-        take = lambda: buf.take(0, 0)
+        take = lambda: buf.take(0)
 
         put()
         put()
@@ -86,14 +85,15 @@ class TestBuffer(unittest.TestCase):
         self.assertIsNone(b3)
 
     def test_cant_put_record_larger_than_max_message_size(self):
-        buf = stitchclient.client.Buffer()        
+        buf = stitchclient.client.Buffer()
+        buf.put(huge_record, None)        
         with self.assertRaises(ValueError):
-            buf.put(huge_record, None)
+            buf.take(0, True)
 
     def test_trigger_batch_at_10k_messages(self):
         buf = stitchclient.client.Buffer()        
         put = lambda: buf.put(tiny_record, None)
-        take = lambda: buf.take(MAX_BATCH_SIZE_BYTES, 60000)
+        take = lambda: buf.take(60000)
         for i in range(9999):
             put()
         self.assertTrue(take() is None)
