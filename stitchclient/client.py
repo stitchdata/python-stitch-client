@@ -1,13 +1,10 @@
 import collections
 from io import StringIO
-import logging
 import os
-import requests
 import time
 
+import requests
 from transit.writer import Writer
-
-logger = logging.getLogger(__name__)
 
 DEFAULT_MAX_BATCH_SIZE_BYTES = 4194304
 DEFAULT_BATCH_DELAY_SECONDS = 60.0
@@ -19,12 +16,12 @@ class MessageTooLargeException(Exception):
 
 def encode_transit(records):
     '''Returns the records serialized as Transit/json in utf8'''
-    with StringIO() as s:
-        writer = Writer(s, "json")
+    with StringIO() as buf:
+        writer = Writer(buf, "json")
         writer.write(records)
-        return s.getvalue().encode('utf8')
+        return buf.getvalue().encode('utf8')
 
-    
+
 def partition_batch(entries, max_batch_size_bytes):
 
     start = 0
@@ -47,7 +44,7 @@ def partition_batch(entries, max_batch_size_bytes):
                 end = min(end + len(records), len(entries))
 
             # If end is at the end of the input entries, we're done.
-            else:                
+            else:
                 break
 
         # The size of the encoded records in our range is too large. If we
@@ -55,10 +52,11 @@ def partition_batch(entries, max_batch_size_bytes):
         # and try again.
         elif end - start > 1:
             end = start + (end - start) // 2
-            
+
         else:
             raise MessageTooLargeException(
-                'A single message is larger then the maximum batch size. Message size: {}. Max batch size: {}'
+                ('A single message is larger then the maximum batch size. ' +
+                 'Message size: {}. Max batch size: {}')
                 .format(len(encoded), max_batch_size_bytes))
 
     return result
@@ -97,7 +95,7 @@ class Client(object):
         self._buffer = []
 
         # Stats we update as we send records
-        self.time_last_batch_sent = time.time()        
+        self.time_last_batch_sent = time.time()
         self.batch_stats = collections.deque(maxlen=100)
 
         # We'll try using a big batch size to start out
@@ -106,7 +104,7 @@ class Client(object):
     def _add_message(self, message, callback_arg):
         self._buffer.append(BufferEntry(value=message,
                                         callback_arg=callback_arg))
-        
+
     def moving_average_bytes_per_record(self):
         num_records = 0
         num_bytes = 0
@@ -114,8 +112,8 @@ class Client(object):
             num_records += stats.num_records
             num_bytes += stats.num_bytes
 
-        return num_bytes // num_records        
-        
+        return num_bytes // num_records
+
     def push(self, message, callback_arg=None):
         """message should be a dict recognized by the Stitch Import API.
 
@@ -129,22 +127,21 @@ class Client(object):
         message.setdefault('table_name', self.table_name)
 
         self._add_message(message, callback_arg)
-        
+
         batch = self._take_batch(self.target_messages_per_batch)
-        if len(batch) > 0:
+        if batch:
             self._send_batch(batch)
-        
+
 
     def _take_batch(self, min_records):
         '''If we have enough data to build a batch, returns all the data in the
         buffer and then clears the buffer.'''
 
-        if len(self._buffer) == 0:
+        if not self._buffer:
             return []
 
-        t = time.time()
         enough_messages = len(self._buffer) >= min_records
-        enough_time = t - self.time_last_batch_sent >= self.batch_delay_seconds
+        enough_time = time.time() - self.time_last_batch_sent >= self.batch_delay_seconds
         ready = enough_messages or enough_time
 
         if not ready:
@@ -169,7 +166,6 @@ class Client(object):
 
 
     def _send(self, body, callback_args):
-        logger.debug("Sending batch of %d entries, %d bytes", len(callback_args), len(body))
         response = self._stitch_request(body)
 
         if response.status_code < 300:
@@ -180,7 +176,7 @@ class Client(object):
                                .format(response))
         self.time_last_batch_sent = time.time()
         self.batch_stats.append(BatchStatsEntry(len(callback_args), len(body)))
-        
+
     def flush(self):
         batch = self._take_batch(0)
         self._send_batch(batch)
@@ -193,7 +189,6 @@ class Client(object):
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.DEBUG)
 
     with Client(int(os.environ['STITCH_CLIENT_ID']),
                 os.environ['STITCH_TOKEN'],
@@ -204,4 +199,3 @@ if __name__ == "__main__":
                     'key_names': ['id'],
                     'sequence': i,
                     'data': {'id': i, 'value': 'abc'}}, i)
-
