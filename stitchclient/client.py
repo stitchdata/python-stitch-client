@@ -131,15 +131,9 @@ class Client(object):
         self._add_message(message, callback_arg)
         
         batch = self._take_batch(self.target_messages_per_batch)
-        if len(batch) == 0:
-            return
-
-        for body, callback_args in partition_batch(batch, self.max_batch_size_bytes):
-            self._send_batch(body, callback_args)
-
-        self.target_messages_per_batch = min(self.max_messages_per_batch,
-                                             0.8 * (self.max_batch_size_bytes / self.moving_average_bytes_per_record()))
-        print('Target messages per batch: {:f}'.format(self.target_messages_per_batch))
+        if len(batch) > 0:
+            self._send_batch(batch)
+        
 
     def _take_batch(self, min_records):
         '''If we have enough data to build a batch, returns all the data in the
@@ -159,17 +153,22 @@ class Client(object):
         result = list(self._buffer)
         self._buffer.clear()
         return result
-            
+
+    def _send_batch(self, batch):
+        for body, callback_args in partition_batch(batch, self.max_batch_size_bytes):
+            self._send(body, callback_args)
+
+        self.target_messages_per_batch = min(self.max_messages_per_batch,
+                                             0.8 * (self.max_batch_size_bytes / self.moving_average_bytes_per_record()))
+
 
     def _stitch_request(self, body):
         headers = {'Authorization': 'Bearer {}'.format(self.token),
                    'Content-Type': 'application/transit+json'}
-        print('Headers is ' + str(headers))
-        print('Data is' + body[:1000])
         return requests.post(self.stitch_url, headers=headers, data=body)
 
 
-    def _send_batch(self, body, callback_args):
+    def _send(self, body, callback_args):
         logger.debug("Sending batch of %d entries, %d bytes", len(callback_args), len(body))
         response = self._stitch_request(body)
 
@@ -181,16 +180,10 @@ class Client(object):
                                .format(response))
         self.time_last_batch_sent = time.time()
         self.batch_stats.append(BatchStatsEntry(len(callback_args), len(body)))
-        num_records = 0
-        num_bytes = 0
-        for stats in self.batch_stats:
-            num_records += stats.num_records
-            num_bytes += stats.num_bytes
-        print('Moving average record size: {:d}'.format(num_bytes // num_records))
         
     def flush(self):
-        for body, callback_args in partition_batch(self._take_batch(0), self.max_batch_size_bytes):
-            self._send_batch(body, callback_args)
+        batch = self._take_batch(0)
+        self._send_batch(batch)
 
     def __enter__(self):
         return self
