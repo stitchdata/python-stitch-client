@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 DEFAULT_MAX_BATCH_SIZE_BYTES = 4194304
 DEFAULT_BATCH_DELAY_SECONDS = 60.0
-MAX_MESSAGES_PER_BATCH = 10000
+MAX_MESSAGES_PER_BATCH = 20000
 DEFAULT_STITCH_URL = 'https://api.stitchdata.com/v2/import/push'
 
 class MessageTooLargeException(Exception):
