@@ -67,6 +67,9 @@ BufferEntry = collections.namedtuple(
     'BufferEntry',
     ['value', 'callback_arg'])
 
+BatchStatsEntry = collections.namedtuple(
+    'BatchStatsEntry', ['num_records', 'num_bytes'])
+
 class Client(object):
 
     def __init__(self,
@@ -90,13 +93,28 @@ class Client(object):
         self.max_batch_size_bytes = max_batch_size_bytes
         self.batch_delay_seconds = batch_delay_seconds
         self.callback_function = callback_function
-        self.time_last_batch_sent = time.time()        
+
         self._buffer = []
 
+        # Stats we update as we send records
+        self.time_last_batch_sent = time.time()        
+        self.batch_stats = collections.deque(maxlen=100)
+
+        # We'll try using a big batch size to start out
+        self.target_messages_per_batch = self.max_messages_per_batch
 
     def _add_message(self, message, callback_arg):
         self._buffer.append(BufferEntry(value=message,
-                                        callback_arg=callback_arg))        
+                                        callback_arg=callback_arg))
+        
+    def moving_average_bytes_per_record(self):
+        num_records = 0
+        num_bytes = 0
+        for stats in self.batch_stats:
+            num_records += stats.num_records
+            num_bytes += stats.num_bytes
+
+        return num_bytes // num_records        
         
     def push(self, message, callback_arg=None):
         """message should be a dict recognized by the Stitch Import API.
@@ -112,11 +130,16 @@ class Client(object):
 
         self._add_message(message, callback_arg)
         
-        batch = self._take_batch(self.max_messages_per_batch)
-        partitioned_batches = partition_batch(batch, self.max_batch_size_bytes)
+        batch = self._take_batch(self.target_messages_per_batch)
+        if len(batch) == 0:
+            return
+
         for body, callback_args in partition_batch(batch, self.max_batch_size_bytes):
             self._send_batch(body, callback_args)
 
+        self.target_messages_per_batch = min(self.max_messages_per_batch,
+                                             0.8 * (self.max_batch_size_bytes / self.moving_average_bytes_per_record()))
+        print('Target messages per batch: {:f}'.format(self.target_messages_per_batch))
 
     def _take_batch(self, min_records):
         '''If we have enough data to build a batch, returns all the data in the
@@ -157,7 +180,14 @@ class Client(object):
             raise RuntimeError("Error sending data to the Stitch API. {0.status_code} - {0.content}"  # nopep8
                                .format(response))
         self.time_last_batch_sent = time.time()
-
+        self.batch_stats.append(BatchStatsEntry(len(callback_args), len(body)))
+        num_records = 0
+        num_bytes = 0
+        for stats in self.batch_stats:
+            num_records += stats.num_records
+            num_bytes += stats.num_bytes
+        print('Moving average record size: {:d}'.format(num_bytes // num_records))
+        
     def flush(self):
         for body, callback_args in partition_batch(self._take_batch(0), self.max_batch_size_bytes):
             self._send_batch(body, callback_args)

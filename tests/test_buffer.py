@@ -143,7 +143,7 @@ class TestClient(unittest.TestCase):
         self.assertEqual([], self.client._stitch_request.mock_calls)
 
     def test_push_two_triggers_send(self):
-        self.client.max_messages_per_batch = 2
+        self.client.target_messages_per_batch = 2
         self.client.callback_function = self.accumulate_callbacks
         message_a = self.create_stitch_message('foo', ['bar'], {'bar': 1, 'letter': 'a'})
         message_b = self.create_stitch_message('foo', ['bar'], {'bar': 2, 'letter': 'b'})
@@ -154,7 +154,7 @@ class TestClient(unittest.TestCase):
         self.assertEqual([[1, 2]], self.callback_args)
 
     def test_push_two_partitioned(self):
-        self.client.max_messages_per_batch = 2
+        self.client.target_messages_per_batch = 2
         self.client.max_batch_size_bytes = 200
         self.client.callback_function = self.accumulate_callbacks
         message_a = self.create_stitch_message('foo', ['bar'], {'bar': 1, 'letter': 'a'})
@@ -168,7 +168,7 @@ class TestClient(unittest.TestCase):
     def test_exit_triggers_send(self):
 
         with self.client as client:
-            client.max_messages_per_batch = 100
+            client.target_messages_per_batch = 100
             client.callback_function = self.accumulate_callbacks
             message_a = self.create_stitch_message('foo', ['bar'], {'bar': 1, 'letter': 'a'})
             message_b = self.create_stitch_message('foo', ['bar'], {'bar': 2, 'letter': 'b'})
@@ -181,7 +181,7 @@ class TestClient(unittest.TestCase):
 
     def test_time_triggers_send(self):
 
-        self.client.max_messages_per_batch = 100
+        self.client.target_messages_per_batch = 100
         self.client.callback_function = self.accumulate_callbacks
         message_a = self.create_stitch_message('foo', ['bar'], {'bar': 1, 'letter': 'a'})
         message_b = self.create_stitch_message('foo', ['bar'], {'bar': 2, 'letter': 'b'})
