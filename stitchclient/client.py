@@ -112,7 +112,7 @@ class Client(object):
             num_records += stats.num_records
             num_bytes += stats.num_bytes
 
-        return num_bytes // num_records
+        return num_bytes // num_records if num_records else None
 
     def push(self, message, callback_arg=None):
         """message should be a dict recognized by the Stitch Import API.
@@ -155,9 +155,12 @@ class Client(object):
         for body, callback_args in partition_batch(batch, self.max_batch_size_bytes):
             self._send(body, callback_args)
 
-        self.target_messages_per_batch = min(self.max_messages_per_batch,
-                                             0.8 * (self.max_batch_size_bytes / self.moving_average_bytes_per_record()))
-
+        if self.moving_average_bytes_per_record():
+            self.target_messages_per_batch = \
+                min(self.max_messages_per_batch,
+                    0.8 * (self.max_batch_size_bytes / self.moving_average_bytes_per_record()))
+        else:
+            self.target_messages_per_batch = self.max_messages_per_batch
 
     def _stitch_request(self, body):
         headers = {'Authorization': 'Bearer {}'.format(self.token),
