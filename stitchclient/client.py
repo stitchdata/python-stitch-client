@@ -151,12 +151,19 @@ class Client(object):
         self._buffer.clear()
         return result
 
+
     def _send_batch(self, batch):
         for body, callback_args in partition_batch(batch, self.max_batch_size_bytes):
             self._send(body, callback_args)
 
-        self.target_messages_per_batch = min(self.max_messages_per_batch,
-                                             0.8 * (self.max_batch_size_bytes / self.moving_average_bytes_per_record()))
+        try:
+            moving_average = self.moving_average_bytes_per_record()
+            self.target_messages_per_batch = \
+                min(self.max_messages_per_batch,
+                    0.8 * (self.max_batch_size_bytes / moving_average))
+        except ZeroDivisionError:
+            # Handle the case where there are no records
+            pass
 
 
     def _stitch_request(self, body):
