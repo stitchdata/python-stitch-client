@@ -19,18 +19,35 @@ Next, install this library:
 › pip install stitchclient
 ```
 
+Set your environment variables:
+```bash
+export STITCH_CLIENT_ID=<your_stitch_client_id>
+export STITCH_TOKEN=<your_stitch_import_token>
+export STITCH_REGION=<us|eu> # defaults to us
+```
+
 Now you're ready to use the library. From the same `virtualenv`:
 
 ```python
 from stitchclient.client import Client
 
-with Client(int(os.environ['STITCH_CLIENT_ID']), os.environ['STITCH_TOKEN'], callback_function=print) as c:
-        for i in range(1,10):
-            c.push({'action': 'upsert',
-                    'table_name': 'test_table',
-                    'key_names': ['id'],
-                    'sequence': i,
-                    'data': {'id': i, 'value': 'abc'}}, i)
+with Client(
+    os.environ['STITCH_CLIENT_ID'],
+    os.environ['STITCH_TOKEN'],
+    os.environ['STITCH_REGION],
+    callback_function=print,
+) as client:
+    for i in range(1, 10):
+        client.push({
+            'action': 'upsert',
+            'table_name': 'test_table',
+            'key_names': ['id'],
+            'sequence': i,
+            'data': {
+                'id': i,
+                'value': 'abc',
+            },
+        }, i)
 ```
 
 License
