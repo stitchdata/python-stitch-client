@@ -34,7 +34,7 @@ from stitchclient.client import Client
 with Client(
     os.environ['STITCH_CLIENT_ID'],
     os.environ['STITCH_TOKEN'],
-    os.environ['STITCH_REGION],
+    os.environ['STITCH_REGION'],
     callback_function=print,
 ) as client:
     for i in range(1, 10):
