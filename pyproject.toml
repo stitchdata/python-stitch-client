@@ -1,0 +1,15 @@
+[build-system]
+requires = ["flit_core >=2,<3"]
+build-backend = "flit_core.buildapi"
+
+[tool.flit.metadata]
+module = "stitchclient"
+author = "Jonathan Drake"
+author-email = "jdrake@narrativescience.com"
+home-page = "https://github.com/NarrativeScience/python-stitch-client"
+description-file = "README.md"
+requires-python = ">=3.6,<4"
+
+[tool.flit.sdist]
+include = ["LICENSE"]
+exclude = ["tests/"]
