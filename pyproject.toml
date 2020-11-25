@@ -9,7 +9,7 @@ author-email = "jdrake@narrativescience.com"
 home-page = "https://github.com/stitchdata/python-stitch-client"
 description-file = "README.md"
 classifiers = ['Programming Language :: Python :: 3 :: Only']
-requires-python = ">=3.57,<4"
+requires-python = ">=3.5.7,<4"
 
 [tool.flit.sdist]
 include = ["LICENSE"]
