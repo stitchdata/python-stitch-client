@@ -4,9 +4,10 @@ build-backend = "flit_core.buildapi"
 
 [tool.flit.metadata]
 module = "stitchclient"
-author = "Stitch"
-author-email = "support@stitchdata.com"
-home-page = "https://github.com/stitchdata/python-stitch-client"
+author = "Narrative Science"
+author-email = "devops@narrativescience.com"
+dist-name = "python-stitch-client"
+home-page = "https://github.com/NarrativeScience/python-stitch-client"
 description-file = "README.md"
 requires = [
     "python-dateutil==2.6.1",
