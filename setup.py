@@ -15,4 +15,5 @@ setup(name="stitchclient",
           "python-dateutil==2.6.1",
           "msgpack-python",
           "requests==2.24.0",
-      ])
+      ]
+)

@@ -1,0 +1,79 @@
+version: 2.1
+
+orbs:
+  ghpr: narrativescience/ghpr@1.1.1
+
+commands:
+  install-deps:
+    description: Install dependencies and initialize pre-commit hooks
+    steps:
+      - run:
+          name: Install dependencies
+          command: |
+            pip install flit
+
+jobs:
+  test:
+    docker:
+      - image: circleci/python:3.5-jessie-browsers
+    steps:
+      - checkout
+      - run:
+          name: 'Setup virtual env'
+          command: |
+            python3 -m venv venv
+            source venv/bin/activate
+            pip install -U pip setuptools
+            pip install .[dev]
+      - run:
+          name: 'run tests'
+          command: |
+            source venv/bin/activate
+            python -m unittest
+  test-build:
+    docker:
+      - image: circleci/python:3.6
+    steps:
+      - ghpr/build-prospective-branch
+      - install-deps
+      - run:
+          name: Run commit hooks
+          command: |
+            pre-commit run \
+              --source "origin/${GITHUB_PR_BASE_BRANCH}" \
+              --origin "origin/${CIRCLE_BRANCH}" \
+              --show-diff-on-failure
+      - run: flit build
+      - ghpr/post-pr-comment:
+          comment: Tests failed!
+          when: on_fail
+  publish:
+    docker:
+      - image: circleci/python:3.6
+    steps:
+      - checkout
+      - run: pip install flit
+      - run: flit build
+      - run: flit publish
+
+workflows:
+  pull_request:
+    jobs:
+      - test:
+          filters:
+            branches:
+              ignore:
+                - master
+      - test-build:
+          filters:
+            branches:
+              ignore:
+                - master
+  publish:
+    jobs:
+      - publish:
+          filters:
+            tags:
+              only: /v[0-9]+(\.[0-9]+)*/
+            branches:
+              ignore: /.*/
