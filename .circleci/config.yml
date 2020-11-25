@@ -23,7 +23,7 @@ jobs:
           command: |
             python3 -m venv venv
             source venv/bin/activate
-            pip install -U pip setuptools
+            pip install -U pip setuptools python-dateutil==2.6.1 msgpack-python requests==2.24.0
             pip install .[dev]
       - run:
           name: 'run tests'
