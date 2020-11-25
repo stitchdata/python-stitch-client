@@ -1,0 +1,74 @@
+version: 2.1
+
+orbs:
+  ghpr: narrativescience/ghpr@1.1.1
+
+commands:
+  install-deps:
+    description: Install dependencies
+    steps:
+      - run:
+          name: Install dependencies
+          command: |
+            pip install flit
+
+jobs:
+  test:
+    docker:
+      - image: circleci/python:3.5-jessie-browsers
+    steps:
+      - checkout
+      - run:
+          name: 'Setup virtual env'
+          command: |
+            python3 -m venv venv
+            source venv/bin/activate
+            pip install -U pip setuptools python-dateutil==2.6.1 msgpack-python requests==2.24.0
+            pip install .[dev]
+      - run:
+          name: 'run tests'
+          command: |
+            source venv/bin/activate
+            python -m unittest
+  test-build:
+    docker:
+      - image: circleci/python:3.6
+    steps:
+      - ghpr/build-prospective-branch
+      - install-deps
+      - run: flit build
+      - ghpr/post-pr-comment:
+          comment: Tests failed!
+          when: on_fail
+  publish:
+    docker:
+      - image: circleci/python:3.6
+    steps:
+      - checkout
+      - run: pip install flit
+      - run: flit build
+      - run: flit publish
+
+workflows:
+  pull_request:
+    jobs:
+      - test:
+          filters:
+            branches:
+              ignore:
+                - master
+      - test-build:
+          requires:
+            - test
+          filters:
+            branches:
+              ignore:
+                - master
+  publish:
+    jobs:
+      - publish:
+          filters:
+            tags:
+              only: /v[0-9]+(\.[0-9]+)*/
+            branches:
+              ignore: /.*/

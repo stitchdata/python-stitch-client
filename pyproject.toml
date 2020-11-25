@@ -1,0 +1,22 @@
+[build-system]
+requires = ["flit_core >=2,<3"]
+build-backend = "flit_core.buildapi"
+
+[tool.flit.metadata]
+module = "stitchclient"
+author = "Narrative Science"
+author-email = "devops@narrativescience.com"
+dist-name = "python-stitch-client"
+home-page = "https://github.com/NarrativeScience/python-stitch-client"
+description-file = "README.md"
+requires = [
+    "python-dateutil==2.6.1",
+    "msgpack-python",
+    "requests==2.24.0",
+]
+classifiers = ['Programming Language :: Python :: 3 :: Only']
+requires-python = ">=3.5.7,<4"
+
+[tool.flit.sdist]
+include = ["LICENSE"]
+exclude = ["tests/"]
