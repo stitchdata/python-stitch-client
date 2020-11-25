@@ -6,9 +6,10 @@ build-backend = "flit_core.buildapi"
 module = "stitchclient"
 author = "Jonathan Drake"
 author-email = "jdrake@narrativescience.com"
-home-page = "https://github.com/NarrativeScience/python-stitch-client"
+home-page = "https://github.com/stitchdata/python-stitch-client"
 description-file = "README.md"
-requires-python = ">=3.6,<4"
+classifiers = ['Programming Language :: Python :: 3 :: Only']
+requires-python = ">=3.57,<4"
 
 [tool.flit.sdist]
 include = ["LICENSE"]
