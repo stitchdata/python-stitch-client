@@ -58,7 +58,8 @@ workflows:
               ignore:
                 - master
       - test-build:
-          requires: test
+          requires:
+            - test
           filters:
             branches:
               ignore:
