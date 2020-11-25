@@ -5,7 +5,7 @@ orbs:
 
 commands:
   install-deps:
-    description: Install dependencies and initialize pre-commit hooks
+    description: Install dependencies
     steps:
       - run:
           name: Install dependencies
@@ -36,13 +36,6 @@ jobs:
     steps:
       - ghpr/build-prospective-branch
       - install-deps
-      - run:
-          name: Run commit hooks
-          command: |
-            pre-commit run \
-              --source "origin/${GITHUB_PR_BASE_BRANCH}" \
-              --origin "origin/${CIRCLE_BRANCH}" \
-              --show-diff-on-failure
       - run: flit build
       - ghpr/post-pr-comment:
           comment: Tests failed!
@@ -65,6 +58,7 @@ workflows:
               ignore:
                 - master
       - test-build:
+          requires: test
           filters:
             branches:
               ignore:
