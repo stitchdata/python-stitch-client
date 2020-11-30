@@ -12,7 +12,7 @@ setup(name="stitchclient",
       classifiers=['Programming Language :: Python :: 3 :: Only'],
       packages=find_packages(),
       install_requires=[
-          "python-dateutil==2.7.3",
+          "python-dateutil==2.8.1",
           "msgpack-python",
           "requests==2.24.0",
       ]
