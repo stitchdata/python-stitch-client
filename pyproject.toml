@@ -10,7 +10,7 @@ dist-name = "ns_stitchclient"
 home-page = "https://github.com/NarrativeScience/python-stitch-client"
 description-file = "README.md"
 requires = [
-    "python-dateutil==2.6.1",
+    "python-dateutil==2.7.3",
     "msgpack-python",
     "requests==2.24.0",
 ]

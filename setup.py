@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 import subprocess
 
 setup(name="stitchclient",
-      version="0.8.0.post1",
+      version="0.8.1.post1",
       description="A Stitch API client for Python",
       author="Stitch",
       author_email="support@stitchdata.com",
@@ -12,7 +12,7 @@ setup(name="stitchclient",
       classifiers=['Programming Language :: Python :: 3 :: Only'],
       packages=find_packages(),
       install_requires=[
-          "python-dateutil==2.6.1",
+          "python-dateutil==2.7.3",
           "msgpack-python",
           "requests==2.24.0",
       ]
