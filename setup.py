@@ -10,7 +10,7 @@ setup(name="stitchclient",
       author_email="support@stitchdata.com",
       url="https://github.com/stitchdata/python-stitch-client",
       classifiers=['Programming Language :: Python :: 3 :: Only'],
-      packages=find_packages(),
+      packages=find_packages() + find_packages(where="./transit"),
       install_requires=[
           "python-dateutil==2.8.1",
           "msgpack-python",
