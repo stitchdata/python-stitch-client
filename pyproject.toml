@@ -18,5 +18,5 @@ classifiers = ['Programming Language :: Python :: 3 :: Only']
 requires-python = ">=3.5.7,<4"
 
 [tool.flit.sdist]
-include = ["LICENSE"]
+include = ["LICENSE", "transit/"]
 exclude = ["tests/"]
