@@ -15,8 +15,8 @@
 import json
 import msgpack
 from collections import OrderedDict
-from transit import sosjson
-from transit.decoder import Decoder
+from . import sosjson
+from .decoder import Decoder
 
 
 class Reader(object):

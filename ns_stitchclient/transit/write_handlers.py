@@ -15,9 +15,9 @@
 import uuid
 import datetime
 import struct
-from transit import pyversion
-from transit.class_hash import ClassDict
-from transit.transit_types import Keyword, Symbol, URI, frozendict, TaggedValue, Link, Boolean
+from . import pyversion
+from .class_hash import ClassDict
+from .transit_types import Keyword, Symbol, URI, frozendict, TaggedValue, Link, Boolean
 from decimal import Decimal
 from dateutil import tz
 from math import isnan

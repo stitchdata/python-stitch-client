@@ -13,12 +13,12 @@
 ## limitations under the License.
 
 from collections import OrderedDict
-from transit import pyversion, transit_types
-from transit import read_handlers as rh
-from transit.constants import MAP_AS_ARR, ESC, SUB, RES
-from transit.helpers import pairs
-from transit.rolling_cache import RollingCache, is_cacheable, is_cache_key
-from transit.transit_types import true, false
+from . import pyversion, transit_types
+from . import read_handlers as rh
+from .constants import MAP_AS_ARR, ESC, SUB, RES
+from .helpers import pairs
+from .rolling_cache import RollingCache, is_cacheable, is_cache_key
+from .transit_types import true, false
 
 
 class Tag(object):

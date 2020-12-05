@@ -18,7 +18,7 @@ import ctypes
 import dateutil.parser
 import datetime
 import dateutil.tz
-from transit.helpers import pairs
+from .helpers import pairs
 from decimal import Decimal
 
 ## Read handlers are used by the decoder when parsing/reading in Transit

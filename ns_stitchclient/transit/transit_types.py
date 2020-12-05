@@ -13,7 +13,7 @@
 ## limitations under the License.
 
 from collections import Mapping, Hashable
-from transit.pyversion import string_types, unicode_f, unicode_type
+from .pyversion import string_types, unicode_f, unicode_type
 
 
 class Named(object):

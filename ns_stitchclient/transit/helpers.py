@@ -13,7 +13,7 @@
 ## limitations under the License.
 
 import itertools
-from transit.pyversion import imap, izip
+from .pyversion import imap, izip
 
 
 def mapcat(f, i):

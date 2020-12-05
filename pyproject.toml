@@ -3,7 +3,7 @@ requires = ["flit_core >=2,<3"]
 build-backend = "flit_core.buildapi"
 
 [tool.flit.metadata]
-module = "stitchclient"
+module = "ns_stitchclient"
 author = "Narrative Science"
 author-email = "devops@narrativescience.com"
 dist-name = "ns_stitchclient"
