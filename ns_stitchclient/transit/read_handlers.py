@@ -12,7 +12,7 @@
 ## See the License for the specific language governing permissions and
 ## limitations under the License.
 
-from transit import pyversion, transit_types
+from . import pyversion, transit_types
 import uuid
 import ctypes
 import dateutil.parser

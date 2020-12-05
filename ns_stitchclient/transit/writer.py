@@ -15,11 +15,11 @@
 import sys
 import msgpack
 import re
-from transit import pyversion
-from transit.constants import SUB, ESC, RES, MAP_AS_ARR, QUOTE
-from transit.rolling_cache import RollingCache
-from transit.write_handlers import WriteHandler
-from transit.transit_types import TaggedValue
+from . import pyversion
+from .constants import SUB, ESC, RES, MAP_AS_ARR, QUOTE
+from .rolling_cache import RollingCache
+from .write_handlers import WriteHandler
+from .transit_types import TaggedValue
 
 ESCAPE_DCT = {
     '\\': u'\\\\',
