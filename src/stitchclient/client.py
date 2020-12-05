@@ -4,7 +4,7 @@ import os
 import time
 
 import requests
-from .transit.writer import Writer
+from transit.writer import Writer
 
 DEFAULT_MAX_BATCH_SIZE_BYTES = 4194304
 DEFAULT_BATCH_DELAY_SECONDS = 60.0
