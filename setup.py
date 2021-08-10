@@ -5,7 +5,7 @@ import subprocess
 
 setup(
     name="stitchclient",
-    version="1.0.0",
+    version="1.0.1",
     description="A Stitch API client for Python",
     author="Stitch",
     author_email="support@stitchdata.com",
@@ -13,8 +13,8 @@ setup(
     classifiers=['Programming Language :: Python :: 3 :: Only'],
     packages=find_packages(),
     install_requires=[
-        "python-dateutil==2.6.1",
+        "python-dateutil>=2.6.1,<3.0",
         "msgpack-python",
-        "requests==2.20.0",
+        "requests>=2.20.0,<3.0",
     ],
 )
