@@ -1,3 +1,9 @@
+This is a fork of
+[python-stitch-client](https://github.com/stitchdata/python-stitch-client) with
+the only change being a relaxation of the versions in the dependencies as per
+[PR 15](https://github.com/stitchdata/python-stitch-client/pull/15). When (if)
+that PR is merged, this fork will be removed.
+
 python-stitch-client
 ====================
 
