@@ -5,7 +5,7 @@ import subprocess
 
 setup(
     name="stitchclient",
-    version="1.0.1",
+    version="1.1.0",
     description="A Stitch API client for Python",
     author="Stitch",
     author_email="support@stitchdata.com",
