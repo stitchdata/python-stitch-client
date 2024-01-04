@@ -154,8 +154,28 @@ jobs:
           command: |
             source stitch-client/bin/activate
             python -m unittest
+
 workflows:
-  build:
+  version: 2
+  commit:
+    jobs:
+      - build_test_v3_4
+      - build_test_v3_5
+      - build_test_v3_6
+      - build_test_v3_7
+      - build_test_v3_8
+      - build_test_v3_9
+      - build_test_v3_10
+      - build_test_v3_11
+      - build_test_v3_12
+  build_daily:
+    triggers:
+      - schedule:
+          cron: "0 13 * * *"
+          filters:
+            branches:
+              only:
+                - master
     jobs:
       - build_test_v3_4
       - build_test_v3_5
