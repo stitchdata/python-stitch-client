@@ -159,15 +159,15 @@ workflows:
   version: 2
   commit:
     jobs:
-      - build_test_v3_4
-      - build_test_v3_5
-      - build_test_v3_6
-      - build_test_v3_7
-      - build_test_v3_8
-      - build_test_v3_9
-      - build
-      - build_test_v3_11
-      - build_test_v3_12
+      - build:
+      - build_test_v3_4:
+      - build_test_v3_5:
+      - build_test_v3_6:
+      - build_test_v3_7:
+      - build_test_v3_8:
+      - build_test_v3_9:
+      - build_test_v3_11:
+      - build_test_v3_12:
   build_daily:
     triggers:
       - schedule:
@@ -177,12 +177,12 @@ workflows:
               only:
                 - master
     jobs:
-      - build_test_v3_4
-      - build_test_v3_5
-      - build_test_v3_6
-      - build_test_v3_7
-      - build_test_v3_8
-      - build_test_v3_9
-      - build
-      - build_test_v3_11
-      - build_test_v3_12
+      - build:
+      - build_test_v3_4:
+      - build_test_v3_5:
+      - build_test_v3_6:
+      - build_test_v3_7:
+      - build_test_v3_8:
+      - build_test_v3_9:
+      - build_test_v3_11:
+      - build_test_v3_12:
