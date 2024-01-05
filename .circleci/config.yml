@@ -160,14 +160,23 @@ workflows:
   commit:
     jobs:
       - build:
+          context: circleci-user
       - build_test_v3_4:
+          context: circleci-user
       - build_test_v3_5:
+          context: circleci-user
       - build_test_v3_6:
+          context: circleci-user
       - build_test_v3_7:
+          context: circleci-user
       - build_test_v3_8:
+          context: circleci-user
       - build_test_v3_9:
+          context: circleci-user
       - build_test_v3_11:
+          context: circleci-user
       - build_test_v3_12:
+          context: circleci-user
   build_daily:
     triggers:
       - schedule:
@@ -176,13 +185,22 @@ workflows:
             branches:
               only:
                 - master
-    jobs:
+    jobs: 
       - build:
+          context: circleci-user
       - build_test_v3_4:
+          context: circleci-user
       - build_test_v3_5:
+          context: circleci-user
       - build_test_v3_6:
+          context: circleci-user
       - build_test_v3_7:
+          context: circleci-user
       - build_test_v3_8:
+          context: circleci-user
       - build_test_v3_9:
+          context: circleci-user
       - build_test_v3_11:
+          context: circleci-user
       - build_test_v3_12:
+          context: circleci-user
