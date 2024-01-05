@@ -12,8 +12,8 @@
 ## See the License for the specific language governing permissions and
 ## limitations under the License.
 
-from collections import Mapping, Hashable
-from transit.pyversion import string_types, unicode_f, unicode_type
+from collections.abc import Mapping, Hashable
+from transit.pyversion import string_types
 
 
 class Named(object):
