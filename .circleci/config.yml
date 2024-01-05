@@ -103,7 +103,7 @@ jobs:
           command: |
             source stitch-client/bin/activate
             python -m unittest
-  build_test_v3_10:
+  build:
     docker:
       - image: cimg/python:3.10
     steps:
@@ -165,7 +165,7 @@ workflows:
       - build_test_v3_7
       - build_test_v3_8
       - build_test_v3_9
-      - build_test_v3_10
+      - build
       - build_test_v3_11
       - build_test_v3_12
   build_daily:
@@ -183,6 +183,6 @@ workflows:
       - build_test_v3_7
       - build_test_v3_8
       - build_test_v3_9
-      - build_test_v3_10
+      - build
       - build_test_v3_11
       - build_test_v3_12
