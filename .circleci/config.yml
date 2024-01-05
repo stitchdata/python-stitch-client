@@ -1,0 +1,206 @@
+version: 2.1
+
+jobs:
+  build_test_v3_4:
+    docker:
+      - image: circleci/python:3.4
+    steps:
+      - checkout
+      - run:
+          name: 'Setup virtual env'
+          command: |
+            python3 -m venv stitch-client
+            source stitch-client/bin/activate
+            pip install 'pip<19.2' 'setuptools<51.0.0'
+            pip install .
+      - run:
+          name: 'run tests'
+          command: |
+            source stitch-client/bin/activate
+            python -m unittest
+  build_test_v3_5:
+    docker:
+      - image: cimg/python:3.5
+    steps:
+      - checkout
+      - run:
+          name: 'Setup virtual env'
+          command: |
+            python3 -m venv stitch-client
+            source stitch-client/bin/activate
+            pip install 'pip<19.2' 'setuptools<51.0.0'
+            pip install .
+      - run:
+          name: 'run tests'
+          command: |
+            source stitch-client/bin/activate
+            python -m unittest
+  build_test_v3_6:
+    docker:
+      - image: cimg/python:3.6
+    steps:
+      - checkout
+      - run:
+          name: 'Setup virtual env'
+          command: |
+            python3 -m venv stitch-client
+            source stitch-client/bin/activate
+            pip install 'pip<19.2' 'setuptools<51.0.0'
+            pip install .
+      - run:
+          name: 'run tests'
+          command: |
+            source stitch-client/bin/activate
+            python -m unittest
+  build_test_v3_7:
+    docker:
+      - image: cimg/python:3.7
+    steps:
+      - checkout
+      - run:
+          name: 'Setup virtual env'
+          command: |
+            python3 -m venv stitch-client
+            source stitch-client/bin/activate
+            pip install 'pip<19.2' 'setuptools<51.0.0'
+            pip install .
+      - run:
+          name: 'run tests'
+          command: |
+            source stitch-client/bin/activate
+            python -m unittest
+  build_test_v3_8:
+    docker:
+      - image: cimg/python:3.8
+    steps:
+      - checkout
+      - run:
+          name: 'Setup virtual env'
+          command: |
+            python3 -m venv stitch-client
+            source stitch-client/bin/activate
+            pip install 'pip<19.2' 'setuptools<51.0.0'
+            pip install .
+      - run:
+          name: 'run tests'
+          command: |
+            source stitch-client/bin/activate
+            python -m unittest
+  build_test_v3_9:
+    docker:
+      - image: cimg/python:3.9
+    steps:
+      - checkout
+      - run:
+          name: 'Setup virtual env'
+          command: |
+            python3 -m venv stitch-client
+            source stitch-client/bin/activate
+            pip install 'pip<19.2' 'setuptools<51.0.0'
+            pip install .
+      - run:
+          name: 'run tests'
+          command: |
+            source stitch-client/bin/activate
+            python -m unittest
+  build:
+    docker:
+      - image: cimg/python:3.10
+    steps:
+      - checkout
+      - run:
+          name: 'Setup virtual env'
+          command: |
+            python3 -m venv stitch-client
+            source stitch-client/bin/activate
+            pip install pip setuptools
+            pip install .
+      - run:
+          name: 'run tests'
+          command: |
+            source stitch-client/bin/activate
+            python -m unittest
+  build_test_v3_11:
+    docker:
+      - image: cimg/python:3.11
+    steps:
+      - checkout
+      - run:
+          name: 'Setup virtual env'
+          command: |
+            python3 -m venv stitch-client
+            source stitch-client/bin/activate
+            pip install pip setuptools
+            pip install .
+      - run:
+          name: 'run tests'
+          command: |
+            source stitch-client/bin/activate
+            python -m unittest
+  build_test_v3_12:
+    docker:
+      - image: cimg/python:3.12
+    steps:
+      - checkout
+      - run:
+          name: 'Setup virtual env'
+          command: |
+            python3 -m venv stitch-client
+            source stitch-client/bin/activate
+            pip install pip setuptools
+            pip install .
+      - run:
+          name: 'run tests'
+          command: |
+            source stitch-client/bin/activate
+            python -m unittest
+
+workflows:
+  version: 2
+  commit:
+    jobs:
+      - build:
+          context: circleci-user
+      - build_test_v3_4:
+          context: circleci-user
+      - build_test_v3_5:
+          context: circleci-user
+      - build_test_v3_6:
+          context: circleci-user
+      - build_test_v3_7:
+          context: circleci-user
+      - build_test_v3_8:
+          context: circleci-user
+      - build_test_v3_9:
+          context: circleci-user
+      - build_test_v3_11:
+          context: circleci-user
+      - build_test_v3_12:
+          context: circleci-user
+  build_daily:
+    triggers:
+      - schedule:
+          cron: "0 13 * * *"
+          filters:
+            branches:
+              only:
+                - master
+    jobs: 
+      - build:
+          context: circleci-user
+      - build_test_v3_4:
+          context: circleci-user
+      - build_test_v3_5:
+          context: circleci-user
+      - build_test_v3_6:
+          context: circleci-user
+      - build_test_v3_7:
+          context: circleci-user
+      - build_test_v3_8:
+          context: circleci-user
+      - build_test_v3_9:
+          context: circleci-user
+      - build_test_v3_11:
+          context: circleci-user
+      - build_test_v3_12:
+          context: circleci-user
